@@ -16,6 +16,11 @@ QUICK CHECKMATE TEST SCENARIOS:
    Black: g8 -> f6 (knight)
    White: h5 -> f7 (queen captures pawn) = CHECKMATE! White wins!
 
+3. BACK RANK MATE (Quick setup):
+   Move pieces to create: Black king on e8, White rook on e1
+   All black pieces blocking king's escape
+   White: e1 -> e8 = CHECKMATE!
+
 Test these to verify checkmate detection is working!
 */
 
@@ -135,8 +140,8 @@ public:
         }
 
         if (!backgroundTex.loadFromFile(basePath + "background.jpg")) {
-            cout << "Warning: Could not load background.jpg, will use solid color" << endl;//not working for now , would fix later 
-        }//???!!!
+            cout << "Warning: Could not load background.jpg, will use solid color" << endl;
+        }
     }
 
     sf::Texture* getPieceTexture(Piece p) {
