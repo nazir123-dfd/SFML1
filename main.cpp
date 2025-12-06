@@ -10,7 +10,7 @@ int main() {
     heart.setPointCount(numPoints);//blah blah blH
 
     // Maroon color (RGB: 128, 0, 0)
-    sf::Color maroon(128, 0, 0);
+    sf::Color maroon(128, 0, 0);//jcfncjhbch
     heart.setFillColor(maroon);
 
     // Generate heart shape using parametric equations
