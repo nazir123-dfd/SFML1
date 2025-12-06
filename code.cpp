@@ -524,9 +524,9 @@ int main() {
     game.displayBoard();
     game.displayWinner();
     game.showMoves();
-    \\code
+    
     cout << "Press Enter to exit...";
-    cin.ignore();\\code
+    cin.ignore();
     cin.get();
 
     return 0;
