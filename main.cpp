@@ -18,7 +18,7 @@ int main() {
     float centerX = 400.0f;
     float centerY = 280.0f;
 
-    for (int i = 0; i < numPoints; i++) {
+    for (int i = 0; i < numPoints; i++) {//chngejhel
         float t = (2.0f * 3.14159f * i) / numPoints;
         float x = 16 * pow(sin(t), 3);
         float y = -(13 * cos(t) - 5 * cos(2 * t) - 2 * cos(3 * t) - cos(4 * t));
