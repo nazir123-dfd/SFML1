@@ -7,7 +7,7 @@ int main() {
     // Create a heart shape using a parametric equation
     sf::ConvexShape heart;
     int numPoints = 100;
-    heart.setPointCount(numPoints);//blah blah blH
+    heart.setPointCount(numPoints);//blah blah blHeuhdehu
 
     // Maroon color (RGB: 128, 0, 0)
     sf::Color maroon(128, 0, 0);//jcfncjhbch
