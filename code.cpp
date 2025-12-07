@@ -14,7 +14,7 @@
 //    bool hasMoved;
 //
 //    Piece() : type(EMPTY), color(NONE), hasMoved(false) {}
-//    Piece(PieceType t, Color c) : type(t), color(c), hasMoved(false) {}
+//    Piece(PieceType t, Color c) : type(t), color(c), hasMoved(false) {}//code
 //};
 //
 //struct Move {
