@@ -7,7 +7,7 @@ QUICK CHECKMATE TEST SCENARIOS:
    White: g2 -> g4 (move pawn)
    Black: d8 -> h4 (move queen) = CHECKMATE! Black wins!
 
-2. SCHOLAR'S MATE (White wins in 4 moves):
+2. SCHOLAR'S MATE (White wins in 4 moves)://kmkmk
    White: e2 -> e4 (pawn)
    Black: e7 -> e5 (pawn)
    White: f1 -> c4 (bishop)
