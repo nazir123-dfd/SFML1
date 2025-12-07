@@ -11,7 +11,7 @@ void ChessGame::render(sf::RenderWindow& window, sf::Font& font, sf::Vector2i mo
     }
     else if (gameState == PLAYING) {
         sf::RectangleShape bg(sf::Vector2f(windowWidth, windowHeight));
-        bg.setFillColor(sf::Color(70, 50, 35));
+        bg.setFillColor(sf::Color(60, 45, 35));
         window.draw(bg);
 
         drawBoard(window);
@@ -26,7 +26,7 @@ void ChessGame::render(sf::RenderWindow& window, sf::Font& font, sf::Vector2i mo
     }
     else if (gameState == GAME_OVER) {
         sf::RectangleShape bg(sf::Vector2f(windowWidth, windowHeight));
-        bg.setFillColor(sf::Color(70, 50, 35));
+        bg.setFillColor(sf::Color(60, 45, 35));
         window.draw(bg);
 
         drawBoard(window);
@@ -40,25 +40,31 @@ void ChessGame::render(sf::RenderWindow& window, sf::Font& font, sf::Vector2i mo
 
 void ChessGame::handleMousePress(sf::Vector2i mousePos) {
     if (gameState == MENU) {
-        if (mousePos.x >= windowWidth / 2 - 210 && mousePos.x <= windowWidth / 2 + 210) {
-            if (mousePos.y >= 260 && mousePos.y <= 325) {
-                gameMode = PVP;
-                gameState = PLAYING;
-            }
-            else if (mousePos.y >= 340 && mousePos.y <= 405) {
-                gameMode = PVE_EASY;
-                gameState = PLAYING;
-            }
-            else if (mousePos.y >= 420 && mousePos.y <= 485) {
-                gameMode = PVE_MEDIUM;
-                gameState = PLAYING;
-            }
-            else if (mousePos.y >= 500 && mousePos.y <= 565) {
-                gameMode = PVE_HARD;
-                gameState = PLAYING;
-            }
-            else if (mousePos.y >= 580 && mousePos.y <= 645) {
-                gameState = INSTRUCTIONS;
+        float centerX = windowWidth / 2.0f;
+        for (int i = 0; i < 5; i++) {
+            float btnY = 210 + i * 62;
+            if (mousePos.x >= centerX - 160 && mousePos.x <= centerX + 160 &&
+                mousePos.y >= btnY && mousePos.y <= btnY + 52) {
+                if (i == 0) {
+                    gameMode = PVP;
+                    gameState = PLAYING;
+                }
+                else if (i == 1) {
+                    gameMode = PVE_EASY;
+                    gameState = PLAYING;
+                }
+                else if (i == 2) {
+                    gameMode = PVE_MEDIUM;
+                    gameState = PLAYING;
+                }
+                else if (i == 3) {
+                    gameMode = PVE_HARD;
+                    gameState = PLAYING;
+                }
+                else if (i == 4) {
+                    gameState = INSTRUCTIONS;
+                }
+                break;
             }
         }
     }
@@ -69,10 +75,10 @@ void ChessGame::handleMousePress(sf::Vector2i mousePos) {
         }
     }
     else if (gameState == PLAYING && !isPromoting) {
-        float forfeitX = boardOffsetX + 8 * cellSize - 10;
-        float forfeitY = boardOffsetY + 250;
+        float centerX = boardOffsetX + (8 * cellSize) / 2.0f;
+        float forfeitY = boardOffsetY + 8 * cellSize + 50;
 
-        if (mousePos.x >= forfeitX && mousePos.x <= forfeitX + 160 &&
+        if (mousePos.x >= centerX - 90 && mousePos.x <= centerX + 90 &&
             mousePos.y >= forfeitY && mousePos.y <= forfeitY + 55) {
             gameOver = true;
             winner = (currentPlayer == WHITE) ? BLACK : WHITE;
@@ -109,7 +115,7 @@ void ChessGame::handleMousePress(sf::Vector2i mousePos) {
                     isDragging = true;
                     float cellX = boardOffsetX + col * cellSize;
                     float cellY = boardOffsetY + row * cellSize;
-                    dragOffset = sf::Vector2f(mousePos.x - cellX, mousePos.y - cellY);
+                    dragOffset = sf::Vector2f((float)mousePos.x - cellX, (float)mousePos.y - cellY);
                 }
                 else {
                     isPieceSelected = false;
@@ -126,7 +132,7 @@ void ChessGame::handleMousePress(sf::Vector2i mousePos) {
                     selectedCol = col;
                     float cellX = boardOffsetX + col * cellSize;
                     float cellY = boardOffsetY + row * cellSize;
-                    dragOffset = sf::Vector2f(mousePos.x - cellX, mousePos.y - cellY);
+                    dragOffset = sf::Vector2f((float)mousePos.x - cellX, (float)mousePos.y - cellY);
                     calculateValidMoves(row, col);
                     isDragging = true;
                 }

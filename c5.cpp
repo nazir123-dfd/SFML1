@@ -3,42 +3,64 @@
 void ChessGame::drawMenu(sf::RenderWindow& window, sf::Font& font) {
     if (backgroundTex.getSize().x > 0) {
         sf::Sprite bgSprite(backgroundTex);
-        float scaleX = windowWidth / backgroundTex.getSize().x;
-        float scaleY = windowHeight / backgroundTex.getSize().y;
+        float scaleX = (float)windowWidth / backgroundTex.getSize().x;
+        float scaleY = (float)windowHeight / backgroundTex.getSize().y;
         float scale = std::max(scaleX, scaleY);
         bgSprite.setScale(scale, scale);
-        float offsetX = (windowWidth - backgroundTex.getSize().x * scale) / 2;
-        float offsetY = (windowHeight - backgroundTex.getSize().y * scale) / 2;
+        float offsetX = (windowWidth - backgroundTex.getSize().x * scale) / 2.0f;
+        float offsetY = (windowHeight - backgroundTex.getSize().y * scale) / 2.0f;
         bgSprite.setPosition(offsetX, offsetY);
         window.draw(bgSprite);
 
-        sf::RectangleShape overlay(sf::Vector2f(windowWidth, windowHeight));
-        overlay.setFillColor(sf::Color(0, 0, 0, 160));
+        sf::RectangleShape overlay(sf::Vector2f((float)windowWidth, (float)windowHeight));
+        overlay.setFillColor(sf::Color(0, 0, 0, 140));
         window.draw(overlay);
     }
     else {
-        sf::RectangleShape bg(sf::Vector2f(windowWidth, windowHeight));
-        bg.setFillColor(sf::Color(60, 45, 30));
+        sf::RectangleShape bg(sf::Vector2f((float)windowWidth, (float)windowHeight));
+        bg.setFillColor(sf::Color(50, 50, 50));
         window.draw(bg);
     }
 
-    sf::RectangleShape titleBox(sf::Vector2f(700, 130));
-    titleBox.setPosition(windowWidth / 2 - 350, 60);
-    titleBox.setFillColor(sf::Color(30, 20, 15, 230));
+    float centerX = windowWidth / 2.0f;
+
+    sf::RectangleShape titleBox(sf::Vector2f(620, 100));
+    titleBox.setPosition(centerX - 310, 50);
+    titleBox.setFillColor(sf::Color(20, 20, 15, 200));
     titleBox.setOutlineColor(sf::Color(218, 165, 32));
     titleBox.setOutlineThickness(4);
     window.draw(titleBox);
 
-    sf::Text title("CHESS MASTER", font, 68);
-    title.setFillColor(sf::Color(255, 215, 0));
+    sf::Text title("CHESS MASTER", font, 60);
+    title.setFillColor(sf::Color(218, 165, 32));
     title.setStyle(sf::Text::Bold);
-    title.setPosition(windowWidth / 2 - title.getGlobalBounds().width / 2, 90);
+    title.setPosition(centerX - title.getGlobalBounds().width / 2, 70);
     window.draw(title);
 
-    sf::Text subtitle("Choose your game mode", font, 22);
+    sf::CircleShape leftDot1(8);
+    leftDot1.setFillColor(sf::Color(218, 165, 32));
+    leftDot1.setPosition(centerX - 330, 92);
+    window.draw(leftDot1);
+
+    sf::CircleShape rightDot1(8);
+    rightDot1.setFillColor(sf::Color(218, 165, 32));
+    rightDot1.setPosition(centerX + 314, 92);
+    window.draw(rightDot1);
+
+    sf::CircleShape leftDot2(6);
+    leftDot2.setFillColor(sf::Color(160, 130, 70));
+    leftDot2.setPosition(centerX - 320, 118);
+    window.draw(leftDot2);
+
+    sf::CircleShape rightDot2(6);
+    rightDot2.setFillColor(sf::Color(160, 130, 70));
+    rightDot2.setPosition(centerX + 314, 118);
+    window.draw(rightDot2);
+
+    sf::Text subtitle("Choose your game mode", font, 20);
     subtitle.setFillColor(sf::Color(218, 165, 32));
     subtitle.setStyle(sf::Text::Italic);
-    subtitle.setPosition(windowWidth / 2 - subtitle.getGlobalBounds().width / 2, 210);
+    subtitle.setPosition(centerX - subtitle.getGlobalBounds().width / 2, 165);
     window.draw(subtitle);
 
     std::vector<std::string> options = {
@@ -50,19 +72,19 @@ void ChessGame::drawMenu(sf::RenderWindow& window, sf::Font& font) {
     };
 
     for (int i = 0; i < options.size(); i++) {
-        float btnY = 260 + i * 80;
+        float btnY = 210 + i * 62;
 
-        sf::RectangleShape btn(sf::Vector2f(420, 65));
-        btn.setPosition(windowWidth / 2 - 210, btnY);
-        btn.setFillColor(sf::Color(40, 26, 13, 230));
+        sf::RectangleShape btn(sf::Vector2f(320, 52));
+        btn.setPosition(centerX - 160, btnY);
+        btn.setFillColor(sf::Color(40, 30, 20, 220));
         btn.setOutlineColor(sf::Color(218, 165, 32));
-        btn.setOutlineThickness(3);
+        btn.setOutlineThickness(2);
         window.draw(btn);
 
-        sf::Text text(options[i], font, 28);
-        text.setFillColor(sf::Color(255, 255, 255));
+        sf::Text text(options[i], font, 24);
+        text.setFillColor(sf::Color(240, 240, 240));
         text.setStyle(sf::Text::Bold);
-        text.setPosition(windowWidth / 2 - text.getGlobalBounds().width / 2, btnY + 18);
+        text.setPosition(centerX - text.getGlobalBounds().width / 2, btnY + 13);
         window.draw(text);
     }
 }
@@ -228,10 +250,10 @@ void ChessGame::drawPromotionMenu(sf::RenderWindow& window, sf::Font& font) {
         btn.setOutlineThickness(2);
         window.draw(btn);
 
-        sf::Text text(pieces[i], font, 28);
+        sf::Text text(pieces[i], font, 28);//code chess almost ready
         text.setFillColor(sf::Color::White);
         text.setStyle(sf::Text::Bold);
         text.setPosition(windowWidth / 2 - text.getGlobalBounds().width / 2, windowHeight / 2 - 56 + i * 68);
         window.draw(text);
-    }//text
+    }
 }
