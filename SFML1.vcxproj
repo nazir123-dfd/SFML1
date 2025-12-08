@@ -141,6 +141,7 @@
     <ClCompile Include="c4.cpp" />
     <ClCompile Include="c5.cpp" />
     <ClCompile Include="c6.cpp" />
+    <ClCompile Include="c7.cpp" />
     <ClCompile Include="ChessGame.h.cpp" />
     <ClCompile Include="code.cpp" />
     <ClCompile Include="main.cpp" />

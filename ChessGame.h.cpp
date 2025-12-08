@@ -1,83 +1,37 @@
 #include "ChessGame.h"
 
 ChessGame::ChessGame() {
-    initializeBoard();
+    windowWidth = 1200;
+    windowHeight = 800;
+
+    cellSize = 70;
+    boardOffsetX = (windowWidth - 8 * cellSize) / 2;
+    boardOffsetY = (windowHeight - 8 * cellSize) / 2;
+
+    gameState = MENU;
+    gameMode = PVP;
     currentPlayer = WHITE;
     gameOver = false;
     winner = NONE;
-    gameState = MENU;
-    gameMode = PVP;
-    isPieceSelected = false;
+
+    isPieceSelected = false;//done!!!!!!!!
     isDragging = false;
     selectedRow = -1;
     selectedCol = -1;
+
     isPromoting = false;
-    whiteTime = 600.0f;
-    blackTime = 600.0f;
+    promoteRow = -1;
+    promoteCol = -1;
+
+    whiteTime = 600;
+    blackTime = 600;
     timeRunning = false;
-    hintsEnabled = false;
+
+    hintsEnabled = true;
     aiThinking = false;
-    windowWidth = 1200;
-    windowHeight = 800;
+
+    initializeBoard();
     loadTextures();
-    updateLayout(windowWidth, windowHeight);
-}
-
-void ChessGame::loadTextures() {
-    std::string basePath = "assets/";
-    whitePawnTex.loadFromFile(basePath + "whitepawn.png");
-    whiteRookTex.loadFromFile(basePath + "whiterook.png");
-    whiteKnightTex.loadFromFile(basePath + "whiteknight.png");
-    whiteBishopTex.loadFromFile(basePath + "whitebishop.png");
-    whiteQueenTex.loadFromFile(basePath + "whitequeen.png");
-    whiteKingTex.loadFromFile(basePath + "whiteking.png");
-    blackPawnTex.loadFromFile(basePath + "blackpawn.png");
-    blackRookTex.loadFromFile(basePath + "blackrook.png");
-    blackKnightTex.loadFromFile(basePath + "blackknight.png");
-    blackBishopTex.loadFromFile(basePath + "blackbishop.png");
-    blackQueenTex.loadFromFile(basePath + "blackqueen.png");
-    blackKingTex.loadFromFile(basePath + "blackking.png");
-    backgroundTex.loadFromFile(basePath + "background.jpg");
-}
-
-void ChessGame::updateLayout(float width, float height) {
-    windowWidth = width;
-    windowHeight = height;
-
-    float boardSize = std::min(width * 0.6f, height * 0.9f);
-    cellSize = boardSize / 8.0f;
-    boardOffsetX = (width - boardSize) / 2.0f;
-    boardOffsetY = (height - boardSize) / 2.0f + 20.0f;
-}
-
-void ChessGame::resize(float width, float height) {
-    updateLayout(width, height);
-}
-
-sf::Texture* ChessGame::getPieceTexture(Piece p) {
-    if (p.type == EMPTY) return nullptr;
-    if (p.color == WHITE) {
-        switch (p.type) {
-        case PAWN: return &whitePawnTex;
-        case ROOK: return &whiteRookTex;
-        case KNIGHT: return &whiteKnightTex;
-        case BISHOP: return &whiteBishopTex;
-        case QUEEN: return &whiteQueenTex;
-        case KING: return &whiteKingTex;
-        default: return nullptr;
-        }
-    }
-    else {
-        switch (p.type) {
-        case PAWN: return &blackPawnTex;
-        case ROOK: return &blackRookTex;
-        case KNIGHT: return &blackKnightTex;
-        case BISHOP: return &blackBishopTex;
-        case QUEEN: return &blackQueenTex;
-        case KING: return &blackKingTex;
-        default: return nullptr;
-        }
-    }
 }
 
 void ChessGame::initializeBoard() {
@@ -114,8 +68,89 @@ void ChessGame::initializeBoard() {
     }
 }
 
+void ChessGame::loadTextures() {
+    if (!whitePawnTex.loadFromFile("assets/whitepawn.png")) {
+        whitePawnTex.create(100, 100);
+    }
+    if (!whiteRookTex.loadFromFile("assets/whiterook.png")) {
+        whiteRookTex.create(100, 100);
+    }
+    if (!whiteKnightTex.loadFromFile("assets/whiteknight.png")) {
+        whiteKnightTex.create(100, 100);
+    }
+    if (!whiteBishopTex.loadFromFile("assets/whitebishop.png")) {
+        whiteBishopTex.create(100, 100);
+    }
+    if (!whiteQueenTex.loadFromFile("assets/whitequeen.png")) {
+        whiteQueenTex.create(100, 100);
+    }
+    if (!whiteKingTex.loadFromFile("assets/whiteking.png")) {
+        whiteKingTex.create(100, 100);
+    }
+
+    if (!blackPawnTex.loadFromFile("assets/blackpawn.png")) {
+        blackPawnTex.create(100, 100);
+    }
+    if (!blackRookTex.loadFromFile("assets/blackrook.png")) {
+        blackRookTex.create(100, 100);
+    }
+    if (!blackKnightTex.loadFromFile("assets/blackknight.png")) {
+        blackKnightTex.create(100, 100);
+    }
+    if (!blackBishopTex.loadFromFile("assets/blackbishop.png")) {
+        blackBishopTex.create(100, 100);
+    }
+    if (!blackQueenTex.loadFromFile("assets/blackqueen.png")) {
+        blackQueenTex.create(100, 100);
+    }
+    if (!blackKingTex.loadFromFile("assets/blackking.png")) {
+        blackKingTex.create(100, 100);
+    }
+
+    backgroundTex.loadFromFile("assets/background.jpg");
+}
+
+sf::Texture* ChessGame::getPieceTexture(Piece p) {
+    if (p.color == WHITE) {
+        switch (p.type) {
+        case PAWN: return &whitePawnTex;
+        case ROOK: return &whiteRookTex;
+        case KNIGHT: return &whiteKnightTex;
+        case BISHOP: return &whiteBishopTex;
+        case QUEEN: return &whiteQueenTex;
+        case KING: return &whiteKingTex;
+        default: return nullptr;
+        }
+    }
+    else if (p.color == BLACK) {
+        switch (p.type) {
+        case PAWN: return &blackPawnTex;
+        case ROOK: return &blackRookTex;
+        case KNIGHT: return &blackKnightTex;
+        case BISHOP: return &blackBishopTex;
+        case QUEEN: return &blackQueenTex;
+        case KING: return &blackKingTex;
+        default: return nullptr;
+        }
+    }
+    return nullptr;
+}
+
+std::pair<int, int> ChessGame::getBoardPosition(sf::Vector2i mousePos) {
+    float x = mousePos.x - boardOffsetX;
+    float y = mousePos.y - boardOffsetY;
+
+    if (x < 0 || x >= 8 * cellSize || y < 0 || y >= 8 * cellSize) {
+        return std::make_pair(-1, -1);
+    }
+
+    int col = (int)(x / cellSize);
+    int row = (int)(y / cellSize);
+
+    return std::make_pair(row, col);
+}
+
 void ChessGame::resetGame() {
-    initializeBoard();
     currentPlayer = WHITE;
     gameOver = false;
     winner = NONE;
@@ -124,48 +159,28 @@ void ChessGame::resetGame() {
     selectedRow = -1;
     selectedCol = -1;
     isPromoting = false;
+    promoteRow = -1;
+    promoteCol = -1;
+    whiteTime = 600;
+    blackTime = 600;
+    timeRunning = false;
+    aiThinking = false;
+
     moveHistory.clear();
     validMoves.clear();
-    whiteTime = 600.0f;
-    blackTime = 600.0f;
-    timeRunning = false;
-    hintsEnabled = false;
-    aiThinking = false;
+
+    initializeBoard();
 }
 
-std::pair<int, int> ChessGame::getBoardPosition(sf::Vector2i mousePos) {
-    int col = (mousePos.x - boardOffsetX) / cellSize;
-    int row = (mousePos.y - boardOffsetY) / cellSize;
-    if (row >= 0 && row < 8 && col >= 0 && col < 8) {
-        return std::make_pair(row, col);
-    }
-    return std::make_pair(-1, -1);
-}
+void ChessGame::resize(float width, float height) {
+    windowWidth = width;
+    windowHeight = height;
 
-void ChessGame::calculateValidMoves(int row, int col) {
-    validMoves.clear();
-    if (board[row][col].color != currentPlayer) return;
+    float maxBoardSize = std::min(width * 0.55f, height * 0.85f);
+    cellSize = maxBoardSize / 8.0f;
 
-    for (int i = 0; i < 8; i++) {
-        for (int j = 0; j < 8; j++) {
-            if (i == row && j == col) continue;
-            if (isValidMove(row, col, i, j)) {
-                Piece tempPiece = board[i][j];
-                Piece tempFrom = board[row][col];
-                board[i][j] = board[row][col];
-                board[row][col] = Piece();
-
-                bool inCheck = isInCheck(currentPlayer);
-
-                board[row][col] = tempFrom;
-                board[i][j] = tempPiece;
-
-                if (!inCheck) {
-                    validMoves.push_back(std::make_pair(i, j));
-                }
-            }
-        }
-    }
+    boardOffsetX = (windowWidth - 8 * cellSize) / 2;
+    boardOffsetY = (windowHeight - 8 * cellSize) / 2;
 }
 
 GameState ChessGame::getGameState() {

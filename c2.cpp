@@ -2,7 +2,6 @@
 
 int ChessGame::evaluateBoard() {
     int score = 0;
-
     int pieceValues[7] = { 0, 10, 50, 30, 30, 90, 900 };
 
     for (int i = 0; i < 8; i++) {
@@ -18,7 +17,6 @@ int ChessGame::evaluateBoard() {
             }
         }
     }
-
     return score;
 }
 
@@ -140,7 +138,6 @@ Move ChessGame::getBestMove(int depth) {
             }
         }
     }
-
     return bestMove;
 }
 

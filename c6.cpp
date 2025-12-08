@@ -1,200 +1,84 @@
 #include "ChessGame.h"
 
-void ChessGame::render(sf::RenderWindow& window, sf::Font& font, sf::Vector2i mousePos) {
-    window.clear();
+void ChessGame::drawGameOver(sf::RenderWindow& window, sf::Font& font) {
+    sf::RectangleShape fullOverlay(sf::Vector2f(windowWidth, windowHeight));
+    fullOverlay.setFillColor(sf::Color(0, 0, 0, 180));
+    window.draw(fullOverlay);
 
-    if (gameState == MENU) {
-        drawMenu(window, font);
+    sf::RectangleShape bg(sf::Vector2f(580, 380));
+    bg.setPosition(windowWidth / 2 - 290, windowHeight / 2 - 190);
+    bg.setFillColor(sf::Color(40, 30, 20));
+    bg.setOutlineColor(sf::Color(210, 180, 140));
+    bg.setOutlineThickness(5);
+    window.draw(bg);
+
+    std::string message;
+    if (winner == NONE) {
+        message = "STALEMATE!";
     }
-    else if (gameState == INSTRUCTIONS) {
-        drawInstructions(window, font);
+    else if (winner == WHITE) {
+        message = "WHITE WINS!";
     }
-    else if (gameState == PLAYING) {
-        sf::RectangleShape bg(sf::Vector2f(windowWidth, windowHeight));
-        bg.setFillColor(sf::Color(60, 45, 35));
-        window.draw(bg);
-
-        drawBoard(window);
-        drawBoardLabels(window, font);
-        drawHighlights(window);
-        drawPieces(window, mousePos);
-        drawGameUI(window, font);
-
-        if (isPromoting) {
-            drawPromotionMenu(window, font);
-        }
-    }
-    else if (gameState == GAME_OVER) {
-        sf::RectangleShape bg(sf::Vector2f(windowWidth, windowHeight));
-        bg.setFillColor(sf::Color(60, 45, 35));
-        window.draw(bg);
-
-        drawBoard(window);
-        drawBoardLabels(window, font);
-        drawPieces(window, mousePos);
-        drawGameOver(window, font);
+    else {
+        message = "BLACK WINS!";
     }
 
-    window.display();
+    sf::Text title(message, font, 52);
+    title.setFillColor(sf::Color::White);
+    title.setStyle(sf::Text::Bold);
+    title.setPosition(windowWidth / 2 - title.getGlobalBounds().width / 2, windowHeight / 2 - 110);
+    window.draw(title);
+
+    sf::Text subtext(winner == NONE ? "DRAW" : "CHECKMATE", font, 32);
+    subtext.setFillColor(sf::Color(210, 180, 140));
+    subtext.setPosition(windowWidth / 2 - subtext.getGlobalBounds().width / 2, windowHeight / 2 - 45);
+    window.draw(subtext);
+
+    sf::RectangleShape menuBtn(sf::Vector2f(280, 75));
+    menuBtn.setPosition(windowWidth / 2 - 140, windowHeight / 2 + 40);
+    menuBtn.setFillColor(sf::Color(101, 67, 33));
+    menuBtn.setOutlineColor(sf::Color(210, 180, 140));
+    menuBtn.setOutlineThickness(3);
+    window.draw(menuBtn);
+
+    sf::Text menuText("MAIN MENU", font, 36);
+    menuText.setFillColor(sf::Color::White);
+    menuText.setStyle(sf::Text::Bold);
+    menuText.setPosition(windowWidth / 2 - menuText.getGlobalBounds().width / 2, windowHeight / 2 + 57);
+    window.draw(menuText);
 }
 
-void ChessGame::handleMousePress(sf::Vector2i mousePos) {
-    if (gameState == MENU) {
-        float centerX = windowWidth / 2.0f;
-        for (int i = 0; i < 5; i++) {
-            float btnY = 210 + i * 62;
-            if (mousePos.x >= centerX - 160 && mousePos.x <= centerX + 160 &&
-                mousePos.y >= btnY && mousePos.y <= btnY + 52) {
-                if (i == 0) {
-                    gameMode = PVP;
-                    gameState = PLAYING;
-                }
-                else if (i == 1) {
-                    gameMode = PVE_EASY;
-                    gameState = PLAYING;
-                }
-                else if (i == 2) {
-                    gameMode = PVE_MEDIUM;
-                    gameState = PLAYING;
-                }
-                else if (i == 3) {
-                    gameMode = PVE_HARD;
-                    gameState = PLAYING;
-                }
-                else if (i == 4) {
-                    gameState = INSTRUCTIONS;
-                }
-                break;
-            }
-        }
-    }
-    else if (gameState == INSTRUCTIONS) {
-        if (mousePos.x >= windowWidth / 2 - 140 && mousePos.x <= windowWidth / 2 + 140 &&
-            mousePos.y >= windowHeight / 2 + 220 && mousePos.y <= windowHeight / 2 + 280) {
-            gameState = MENU;
-        }
-    }
-    else if (gameState == PLAYING && !isPromoting) {
-        float centerX = boardOffsetX + (8 * cellSize) / 2.0f;
-        float forfeitY = boardOffsetY + 8 * cellSize + 50;
+void ChessGame::drawPromotionMenu(sf::RenderWindow& window, sf::Font& font) {
+    sf::RectangleShape overlay(sf::Vector2f(windowWidth, windowHeight));
+    overlay.setFillColor(sf::Color(0, 0, 0, 200));
+    window.draw(overlay);
 
-        if (mousePos.x >= centerX - 90 && mousePos.x <= centerX + 90 &&
-            mousePos.y >= forfeitY && mousePos.y <= forfeitY + 55) {
-            gameOver = true;
-            winner = (currentPlayer == WHITE) ? BLACK : WHITE;
-            gameState = GAME_OVER;
-            return;
-        }
+    sf::RectangleShape bg(sf::Vector2f(380, 340));
+    bg.setPosition(windowWidth / 2 - 190, windowHeight / 2 - 170);
+    bg.setFillColor(sf::Color(40, 30, 20));
+    bg.setOutlineColor(sf::Color(210, 180, 140));
+    bg.setOutlineThickness(4);
+    window.draw(bg);
 
-        std::pair<int, int> pos = getBoardPosition(mousePos);
-        if (pos.first != -1) {
-            int row = pos.first;
-            int col = pos.second;
+    sf::Text title("Promote Pawn To:", font, 32);
+    title.setFillColor(sf::Color::White);
+    title.setStyle(sf::Text::Bold);
+    title.setPosition(windowWidth / 2 - title.getGlobalBounds().width / 2, windowHeight / 2 - 135);
+    window.draw(title);
 
-            if (isPieceSelected) {
-                bool isValidTarget = false;
-                for (auto& move : validMoves) {
-                    if (move.first == row && move.second == col) {
-                        isValidTarget = true;
-                        break;
-                    }
-                }
+    std::vector<std::string> pieces = { "Queen", "Rook", "Bishop", "Knight" };
+    for (int i = 0; i < 4; i++) {
+        sf::RectangleShape btn(sf::Vector2f(330, 52));
+        btn.setPosition(windowWidth / 2 - 165, windowHeight / 2 - 65 + i * 68);
+        btn.setFillColor(sf::Color(101, 67, 33));
+        btn.setOutlineColor(sf::Color(210, 180, 140));
+        btn.setOutlineThickness(2);
+        window.draw(btn);
 
-                if (isValidTarget) {
-                    makeMove(selectedRow, selectedCol, row, col);
-                    isPieceSelected = false;
-                    selectedRow = -1;
-                    selectedCol = -1;
-                    validMoves.clear();
-                    isDragging = false;
-                }
-                else if (board[row][col].type != EMPTY && board[row][col].color == currentPlayer) {
-                    selectedRow = row;
-                    selectedCol = col;
-                    calculateValidMoves(row, col);
-                    isDragging = true;
-                    float cellX = boardOffsetX + col * cellSize;
-                    float cellY = boardOffsetY + row * cellSize;
-                    dragOffset = sf::Vector2f((float)mousePos.x - cellX, (float)mousePos.y - cellY);
-                }
-                else {
-                    isPieceSelected = false;
-                    selectedRow = -1;
-                    selectedCol = -1;
-                    validMoves.clear();
-                    isDragging = false;
-                }
-            }
-            else {
-                if (board[row][col].type != EMPTY && board[row][col].color == currentPlayer) {
-                    isPieceSelected = true;
-                    selectedRow = row;
-                    selectedCol = col;
-                    float cellX = boardOffsetX + col * cellSize;
-                    float cellY = boardOffsetY + row * cellSize;
-                    dragOffset = sf::Vector2f((float)mousePos.x - cellX, (float)mousePos.y - cellY);
-                    calculateValidMoves(row, col);
-                    isDragging = true;
-                }
-            }
-        }
-    }
-    else if (gameState == PLAYING && isPromoting) {
-        if (mousePos.x >= windowWidth / 2 - 165 && mousePos.x <= windowWidth / 2 + 165) {
-            if (mousePos.y >= windowHeight / 2 - 65 && mousePos.y < windowHeight / 2 + 3) {
-                board[promoteRow][promoteCol].type = QUEEN;
-                isPromoting = false;
-                checkGameEnd();
-            }
-            else if (mousePos.y >= windowHeight / 2 + 3 && mousePos.y < windowHeight / 2 + 71) {
-                board[promoteRow][promoteCol].type = ROOK;
-                isPromoting = false;
-                checkGameEnd();
-            }
-            else if (mousePos.y >= windowHeight / 2 + 71 && mousePos.y < windowHeight / 2 + 139) {
-                board[promoteRow][promoteCol].type = BISHOP;
-                isPromoting = false;
-                checkGameEnd();
-            }
-            else if (mousePos.y >= windowHeight / 2 + 139 && mousePos.y < windowHeight / 2 + 207) {
-                board[promoteRow][promoteCol].type = KNIGHT;
-                isPromoting = false;
-                checkGameEnd();
-            }
-        }
-    }
-    else if (gameState == GAME_OVER) {
-        if (mousePos.x >= windowWidth / 2 - 140 && mousePos.x <= windowWidth / 2 + 140 &&
-            mousePos.y >= windowHeight / 2 + 40 && mousePos.y <= windowHeight / 2 + 115) {
-            resetGame();
-            gameState = MENU;
-        }
-    }
-}
-
-void ChessGame::handleMouseRelease(sf::Vector2i mousePos) {
-    if (isDragging && gameState == PLAYING && !isPromoting && isPieceSelected) {
-        std::pair<int, int> pos = getBoardPosition(mousePos);
-        if (pos.first != -1) {
-            int toRow = pos.first;
-            int toCol = pos.second;
-            bool isValidTarget = false;
-            for (auto& move : validMoves) {
-                if (move.first == toRow && move.second == toCol) {
-                    isValidTarget = true;
-                    break;
-                }
-            }
-            if (isValidTarget) {
-                makeMove(selectedRow, selectedCol, toRow, toCol);
-                isPieceSelected = false;
-                selectedRow = -1;
-                selectedCol = -1;
-                validMoves.clear();
-                isDragging = false;
-                return;
-            }
-        }
-        isDragging = false;
+        sf::Text text(pieces[i], font, 28);
+        text.setFillColor(sf::Color::White);
+        text.setStyle(sf::Text::Bold);
+        text.setPosition(windowWidth / 2 - text.getGlobalBounds().width / 2, windowHeight / 2 - 56 + i * 68);
+        window.draw(text);
     }
 }

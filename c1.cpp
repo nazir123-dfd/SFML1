@@ -203,3 +203,25 @@ bool ChessGame::makeMove(int fromRow, int fromCol, int toRow, int toCol) {
 
     return true;
 }
+
+void ChessGame::calculateValidMoves(int row, int col) {
+    validMoves.clear();
+
+    for (int i = 0; i < 8; i++) {
+        for (int j = 0; j < 8; j++) {
+            if (isValidMove(row, col, i, j)) {
+                Piece temp = board[i][j];
+                Piece tempFrom = board[row][col];
+                board[i][j] = board[row][col];
+                board[row][col] = Piece();
+
+                if (!isInCheck(currentPlayer)) {
+                    validMoves.push_back(std::make_pair(i, j));
+                }
+
+                board[row][col] = tempFrom;
+                board[i][j] = temp;
+            }
+        }
+    }
+}

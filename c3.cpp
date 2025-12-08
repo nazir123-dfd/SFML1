@@ -21,22 +21,22 @@ void ChessGame::drawBoard(sf::RenderWindow& window) {
 }
 
 void ChessGame::drawBoardLabels(sf::RenderWindow& window, sf::Font& font) {
-    int fontSize = std::max(16, (int)(cellSize * 0.30f));
+    int fontSize = std::max(14, (int)(cellSize * 0.25f));
 
     for (int i = 0; i < 8; i++) {
         char label = 'a' + i;
         float xPos = boardOffsetX + i * cellSize + cellSize / 2 - fontSize / 3;
 
         sf::Text topText(std::string(1, label), font, fontSize);
-        topText.setFillColor(sf::Color(220, 220, 220));
+        topText.setFillColor(sf::Color(200, 200, 200));
         topText.setStyle(sf::Text::Bold);
-        topText.setPosition(xPos, boardOffsetY - fontSize - 28);
+        topText.setPosition(xPos, boardOffsetY - fontSize - 20);
         window.draw(topText);
 
         sf::Text bottomText(std::string(1, label), font, fontSize);
-        bottomText.setFillColor(sf::Color(220, 220, 220));
+        bottomText.setFillColor(sf::Color(200, 200, 200));
         bottomText.setStyle(sf::Text::Bold);
-        bottomText.setPosition(xPos, boardOffsetY + 8 * cellSize + 15);
+        bottomText.setPosition(xPos, boardOffsetY + 8 * cellSize + 10);
         window.draw(bottomText);
     }
 
@@ -45,15 +45,15 @@ void ChessGame::drawBoardLabels(sf::RenderWindow& window, sf::Font& font) {
         float yPos = boardOffsetY + i * cellSize + cellSize / 2 - fontSize / 2;
 
         sf::Text leftText(std::string(1, label), font, fontSize);
-        leftText.setFillColor(sf::Color(220, 220, 220));
+        leftText.setFillColor(sf::Color(200, 200, 200));
         leftText.setStyle(sf::Text::Bold);
-        leftText.setPosition(boardOffsetX - fontSize - 28, yPos);
+        leftText.setPosition(boardOffsetX - fontSize - 20, yPos);
         window.draw(leftText);
 
         sf::Text rightText(std::string(1, label), font, fontSize);
-        rightText.setFillColor(sf::Color(220, 220, 220));
+        rightText.setFillColor(sf::Color(200, 200, 200));
         rightText.setStyle(sf::Text::Bold);
-        rightText.setPosition(boardOffsetX + 8 * cellSize + 15, yPos);
+        rightText.setPosition(boardOffsetX + 8 * cellSize + 10, yPos);
         window.draw(rightText);
     }
 }
@@ -111,8 +111,8 @@ void ChessGame::drawPieces(sf::RenderWindow& window, sf::Vector2i mousePos) {
     }
 }
 
-void ChessGame::drawTimer(sf::RenderWindow& window, sf::Font& font) {
-    int fontSize = std::max(24, (int)(cellSize * 0.42f));
+void ChessGame::drawCompactTimer(sf::RenderWindow& window, sf::Font& font) {
+    int fontSize = std::max(16, (int)(cellSize * 0.28f));
 
     int whiteMin = (int)whiteTime / 60;
     int whiteSec = (int)whiteTime % 60;
@@ -123,44 +123,44 @@ void ChessGame::drawTimer(sf::RenderWindow& window, sf::Font& font) {
     wss << whiteMin << ":" << (whiteSec < 10 ? "0" : "") << whiteSec;
     bss << blackMin << ":" << (blackSec < 10 ? "0" : "") << blackSec;
 
-    float leftPanelX = boardOffsetX - 260;
-    float topY = boardOffsetY + 80;
+    float topY = boardOffsetY + 20;
+    float leftX = 30;
 
-    sf::RectangleShape whiteTimerBg(sf::Vector2f(220, 120));
-    whiteTimerBg.setPosition(leftPanelX, topY);
-    whiteTimerBg.setFillColor(sf::Color(250, 250, 250, 255));
-    whiteTimerBg.setOutlineColor(currentPlayer == WHITE ? sf::Color(50, 200, 50) : sf::Color(140, 140, 140));
-    whiteTimerBg.setOutlineThickness(currentPlayer == WHITE ? 5 : 3);
-    window.draw(whiteTimerBg);
+    sf::RectangleShape whiteBox(sf::Vector2f(140, 70));
+    whiteBox.setPosition(leftX, topY);
+    whiteBox.setFillColor(sf::Color(245, 245, 245));
+    whiteBox.setOutlineColor(currentPlayer == WHITE ? sf::Color(50, 200, 50) : sf::Color(120, 120, 120));
+    whiteBox.setOutlineThickness(currentPlayer == WHITE ? 4 : 2);
+    window.draw(whiteBox);
 
-    sf::Text whiteLabel("WHITE", font, fontSize - 2);
-    whiteLabel.setFillColor(sf::Color(50, 50, 50));
+    sf::Text whiteLabel("WHITE", font, fontSize - 4);
+    whiteLabel.setFillColor(sf::Color(40, 40, 40));
     whiteLabel.setStyle(sf::Text::Bold);
-    whiteLabel.setPosition(leftPanelX + 20, topY + 20);
+    whiteLabel.setPosition(leftX + 10, topY + 10);
     window.draw(whiteLabel);
 
-    sf::Text whiteTimeText(wss.str(), font, fontSize + 8);
+    sf::Text whiteTimeText(wss.str(), font, fontSize + 4);
     whiteTimeText.setFillColor(currentPlayer == WHITE ? sf::Color(0, 150, 0) : sf::Color(80, 80, 80));
     whiteTimeText.setStyle(sf::Text::Bold);
-    whiteTimeText.setPosition(leftPanelX + 20, topY + 65);
+    whiteTimeText.setPosition(leftX + 10, topY + 40);
     window.draw(whiteTimeText);
 
-    sf::RectangleShape blackTimerBg(sf::Vector2f(220, 120));
-    blackTimerBg.setPosition(leftPanelX, topY + 160);
-    blackTimerBg.setFillColor(sf::Color(45, 45, 45, 255));
-    blackTimerBg.setOutlineColor(currentPlayer == BLACK ? sf::Color(50, 200, 50) : sf::Color(100, 100, 100));
-    blackTimerBg.setOutlineThickness(currentPlayer == BLACK ? 5 : 3);
-    window.draw(blackTimerBg);
+    sf::RectangleShape blackBox(sf::Vector2f(140, 70));
+    blackBox.setPosition(leftX, topY + 90);
+    blackBox.setFillColor(sf::Color(40, 40, 40));
+    blackBox.setOutlineColor(currentPlayer == BLACK ? sf::Color(50, 200, 50) : sf::Color(100, 100, 100));
+    blackBox.setOutlineThickness(currentPlayer == BLACK ? 4 : 2);
+    window.draw(blackBox);
 
-    sf::Text blackLabel("BLACK", font, fontSize - 2);
-    blackLabel.setFillColor(sf::Color(230, 230, 230));
+    sf::Text blackLabel("BLACK", font, fontSize - 4);
+    blackLabel.setFillColor(sf::Color(220, 220, 220));
     blackLabel.setStyle(sf::Text::Bold);
-    blackLabel.setPosition(leftPanelX + 20, topY + 180);
+    blackLabel.setPosition(leftX + 10, topY + 100);
     window.draw(blackLabel);
 
-    sf::Text blackTimeText(bss.str(), font, fontSize + 8);
+    sf::Text blackTimeText(bss.str(), font, fontSize + 4);
     blackTimeText.setFillColor(currentPlayer == BLACK ? sf::Color(100, 255, 100) : sf::Color(180, 180, 180));
     blackTimeText.setStyle(sf::Text::Bold);
-    blackTimeText.setPosition(leftPanelX + 20, topY + 225);
+    blackTimeText.setPosition(leftX + 10, topY + 130);
     window.draw(blackTimeText);
 }
