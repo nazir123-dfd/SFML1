@@ -4,8 +4,9 @@ void ChessGame::drawMoveHistory(sf::RenderWindow& window, sf::Font& font) {
     int fontSize = std::max(13, (int)(cellSize * 0.21f));
     float rightX = boardOffsetX + 8 * cellSize + 30;
     float startY = boardOffsetY + 20;
+    float boxHeight = windowHeight - startY - 30;
 
-    sf::RectangleShape historyBg(sf::Vector2f(240, 650));
+    sf::RectangleShape historyBg(sf::Vector2f(340, boxHeight));
     historyBg.setPosition(rightX, startY);
     historyBg.setFillColor(sf::Color(35, 28, 22, 240));
     historyBg.setOutlineColor(sf::Color(180, 150, 90));
@@ -18,46 +19,113 @@ void ChessGame::drawMoveHistory(sf::RenderWindow& window, sf::Font& font) {
     historyTitle.setPosition(rightX + 20, startY + 18);
     window.draw(historyTitle);
 
-    sf::RectangleShape divider(sf::Vector2f(200, 2));
+    sf::RectangleShape divider(sf::Vector2f(300, 2));
     divider.setPosition(rightX + 20, startY + 52);
     divider.setFillColor(sf::Color(218, 165, 32, 150));
     window.draw(divider);
 
-    int maxMoves = 32;
-    int startIdx = std::max(0, (int)moveHistory.size() - maxMoves);
+    sf::Text whiteHeader("White", font, fontSize);
+    whiteHeader.setFillColor(sf::Color(200, 200, 200));
+    whiteHeader.setStyle(sf::Text::Bold);
+    whiteHeader.setPosition(rightX + 50, startY + 60);
+    window.draw(whiteHeader);
 
-    for (int i = startIdx; i < moveHistory.size(); i++) {
-        std::string notation = getMoveNotation(moveHistory[i]);
+    sf::Text blackHeader("Black", font, fontSize);
+    blackHeader.setFillColor(sf::Color(200, 200, 200));
+    blackHeader.setStyle(sf::Text::Bold);
+    blackHeader.setPosition(rightX + 200, startY + 60);
+    window.draw(blackHeader);
 
-        sf::RectangleShape moveBg(sf::Vector2f(200, fontSize + 8));
-        moveBg.setPosition(rightX + 20, startY + 70 + (i - startIdx) * (fontSize + 10));
+    float contentStartY = startY + 85;
+    float contentHeight = boxHeight - 85;
+    int maxVisibleRows = (int)(contentHeight / (fontSize + 10));
 
-        if (i == moveHistory.size() - 1) {
-            moveBg.setFillColor(sf::Color(80, 60, 40, 100));
+    int totalMoves = moveHistory.size();
+    int totalMovePairs = (totalMoves + 1) / 2;
+
+    int maxScroll = std::max(0, totalMovePairs - maxVisibleRows);
+    scrollOffset = std::min(scrollOffset, maxScroll);
+    scrollOffset = std::max(0, scrollOffset);
+
+    for (int pairIdx = scrollOffset; pairIdx < totalMovePairs && pairIdx < scrollOffset + maxVisibleRows; pairIdx++) {
+        int whiteIdx = pairIdx * 2;
+        int blackIdx = pairIdx * 2 + 1;
+        int displayRow = pairIdx - scrollOffset;
+
+        float rowY = contentStartY + displayRow * (fontSize + 10);
+
+        if (rowY + fontSize + 8 > startY + boxHeight) break;
+
+        sf::RectangleShape rowBg(sf::Vector2f(300, fontSize + 8));
+        rowBg.setPosition(rightX + 20, rowY);
+
+        if (pairIdx == totalMovePairs - 1) {
+            rowBg.setFillColor(sf::Color(80, 60, 40, 100));
         }
-        else if ((i - startIdx) % 2 == 0) {
-            moveBg.setFillColor(sf::Color(50, 40, 30, 50));
+        else if (displayRow % 2 == 0) {
+            rowBg.setFillColor(sf::Color(50, 40, 30, 50));
         }
         else {
-            moveBg.setFillColor(sf::Color(45, 35, 25, 30));
+            rowBg.setFillColor(sf::Color(45, 35, 25, 30));
         }
-        window.draw(moveBg);
+        window.draw(rowBg);
 
-        int moveNum = (i / 2) + 1;
-        bool isWhiteMove = (i % 2 == 0);
+        int moveNum = pairIdx + 1;
+        std::stringstream numSS;
+        numSS << moveNum << ".";
+        sf::Text moveNumText(numSS.str(), font, fontSize);
+        moveNumText.setFillColor(sf::Color(180, 180, 180));
+        moveNumText.setPosition(rightX + 25, rowY + 2);
+        window.draw(moveNumText);
 
-        std::stringstream ss;
-        if (isWhiteMove) {
-            ss << moveNum << ". " << notation;
+        if (whiteIdx < totalMoves) {
+            std::string whiteNotation = getMoveNotation(moveHistory[whiteIdx]);
+            sf::Text whiteText(whiteNotation, font, fontSize);
+            whiteText.setFillColor(sf::Color(230, 230, 230));
+            whiteText.setPosition(rightX + 55, rowY + 2);
+            window.draw(whiteText);
         }
-        else {
-            ss << "    " << notation;
-        }
 
-        sf::Text moveText(ss.str(), font, fontSize);
-        moveText.setFillColor(sf::Color(230, 230, 230));
-        moveText.setPosition(rightX + 28, startY + 72 + (i - startIdx) * (fontSize + 10));
-        window.draw(moveText);
+        if (blackIdx < totalMoves) {
+            std::string blackNotation = getMoveNotation(moveHistory[blackIdx]);
+            sf::Text blackText(blackNotation, font, fontSize);
+            blackText.setFillColor(sf::Color(230, 230, 230));
+            blackText.setPosition(rightX + 205, rowY + 2);
+            window.draw(blackText);
+        }
+    }
+
+    if (totalMovePairs > maxVisibleRows) {
+        float scrollBarHeight = 40;
+        float scrollBarMaxY = boxHeight - 90 - scrollBarHeight;
+        float scrollBarY = contentStartY + (scrollOffset * scrollBarMaxY / maxScroll);
+
+        sf::RectangleShape scrollBar(sf::Vector2f(8, scrollBarHeight));
+        scrollBar.setPosition(rightX + 325, scrollBarY);
+        scrollBar.setFillColor(sf::Color(218, 165, 32, 200));
+        window.draw(scrollBar);
+    }
+}
+
+void ChessGame::handleMouseScroll(float delta, sf::Vector2i mousePos) {
+    float rightX = boardOffsetX + 8 * cellSize + 30;
+    float startY = boardOffsetY + 20;
+    float boxHeight = windowHeight - startY - 30;
+
+    if (gameState == PLAYING &&
+        mousePos.x >= rightX && mousePos.x <= rightX + 340 &&
+        mousePos.y >= startY && mousePos.y <= startY + boxHeight) {
+
+        scrollOffset -= (int)delta;
+
+        int fontSize = std::max(13, (int)(cellSize * 0.21f));
+        float contentHeight = boxHeight - 85;
+        int maxVisibleRows = (int)(contentHeight / (fontSize + 10));
+        int totalMovePairs = (moveHistory.size() + 1) / 2;
+        int maxScroll = std::max(0, totalMovePairs - maxVisibleRows);
+
+        scrollOffset = std::min(scrollOffset, maxScroll);
+        scrollOffset = std::max(0, scrollOffset);
     }
 }
 
@@ -84,11 +152,7 @@ void ChessGame::drawControls(sf::RenderWindow& window, sf::Font& font) {
     divider.setFillColor(sf::Color(218, 165, 32, 150));
     window.draw(divider);
 
-    std::vector<std::string> controls = {
-        "U - Undo",
-        "H - Hints"
-    };
-
+    std::vector<std::string> controls = { "U - Undo", "H - Hints" };
     for (int i = 0; i < controls.size(); i++) {
         sf::Text text(controls[i], font, fontSize - 1);
         text.setFillColor(sf::Color(230, 230, 230));

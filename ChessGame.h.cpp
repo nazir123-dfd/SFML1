@@ -165,7 +165,7 @@ void ChessGame::resetGame() {
     blackTime = 600;
     timeRunning = false;
     aiThinking = false;
-
+    scrollOffset = 0;
     moveHistory.clear();
     validMoves.clear();
 
