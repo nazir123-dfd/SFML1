@@ -135,6 +135,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="base code.cpp" />
     <ClCompile Include="c1.cpp" />
     <ClCompile Include="c2.cpp" />
     <ClCompile Include="c3.cpp" />

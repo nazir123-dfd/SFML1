@@ -14,7 +14,7 @@ ChessGame::ChessGame() {
     gameOver = false;
     winner = NONE;
 
-    isPieceSelected = false;//done!!!!!!!!
+    isPieceSelected = false;
     isDragging = false;
     selectedRow = -1;
     selectedCol = -1;
@@ -29,6 +29,7 @@ ChessGame::ChessGame() {
 
     hintsEnabled = true;
     aiThinking = false;
+    scrollOffset = 0;
 
     initializeBoard();
     loadTextures();
@@ -165,7 +166,7 @@ void ChessGame::resetGame() {
     blackTime = 600;
     timeRunning = false;
     aiThinking = false;
-    scrollOffset = 0;
+
     moveHistory.clear();
     validMoves.clear();
 

@@ -46,33 +46,41 @@ private:
     Color winner;
     GameState gameState;
     GameMode gameMode;
+
     sf::Texture whitePawnTex, whiteRookTex, whiteKnightTex, whiteBishopTex, whiteQueenTex, whiteKingTex;
     sf::Texture blackPawnTex, blackRookTex, blackKnightTex, blackBishopTex, blackQueenTex, blackKingTex;
     sf::Texture backgroundTex;
+
     float cellSize;
     float boardOffsetX;
     float boardOffsetY;
     float windowWidth;
     float windowHeight;
+
     bool isPieceSelected;
     bool isDragging;
     int selectedRow, selectedCol;
     sf::Vector2f dragOffset;
     std::vector<std::pair<int, int>> validMoves;
+
     bool isPromoting;
     int promoteRow, promoteCol;
+
     sf::Clock whiteClock;
     sf::Clock blackClock;
     float whiteTime;
     float blackTime;
     bool timeRunning;
+
     bool hintsEnabled;
     bool aiThinking;
     int scrollOffset;
+
     sf::Texture* getPieceTexture(Piece p);
     void initializeBoard();
     void loadTextures();
     void updateLayout(float width, float height);
+
     void drawBoard(sf::RenderWindow& window);
     void drawBoardLabels(sf::RenderWindow& window, sf::Font& font);
     void drawHighlights(sf::RenderWindow& window);
@@ -85,6 +93,7 @@ private:
     void drawCompactTimer(sf::RenderWindow& window, sf::Font& font);
     void drawMoveHistory(sf::RenderWindow& window, sf::Font& font);
     void drawControls(sf::RenderWindow& window, sf::Font& font);
+
     std::pair<int, int> getBoardPosition(sf::Vector2i mousePos);
     void calculateValidMoves(int row, int col);
     void checkGameEnd();
@@ -101,9 +110,11 @@ private:
     bool isCheckmate(Color color);
     bool isStalemate(Color color);
     bool hasLegalMove(Color color);
+
     void updateTimer();
     void undoMove();
     std::string getMoveNotation(const Move& move);
+
     int evaluateBoard();
     int minimax(int depth, int alpha, int beta, bool maximizing);
     Move getBestMove(int depth);
@@ -114,7 +125,7 @@ public:
     void handleMousePress(sf::Vector2i mousePos);
     void handleMouseRelease(sf::Vector2i mousePos);
     void handleKeyPress(sf::Keyboard::Key key);
-    void handleMouseScroll(float delta, sf::Vector2i mousePos);
+    void handleMouseWheel(float delta);
     bool makeMove(int fromRow, int fromCol, int toRow, int toCol);
     void resetGame();
     void render(sf::RenderWindow& window, sf::Font& font, sf::Vector2i mousePos);
